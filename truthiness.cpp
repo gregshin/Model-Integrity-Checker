@@ -11,14 +11,27 @@ struct Node {
 
 class Graph
 {
+	// number of nodes
+	int N;
 
 public:
+	// pointer to start of adjacency list
+	Node**head;
+
+	// constructor
+	Graph(Node*headNode, int N){
+		head = &headNode;
+	}
+
 	// Destructor
 	~Graph() {
-
+		delete head;
 	}
 };
 
+void createNodes(int N) {
+
+}
 
 
 // Graph Implementation in C++ without using STL
