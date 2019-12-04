@@ -29,13 +29,28 @@ public:
 	}
 };
 
-void createNodes(int N) {
+void createNodes(vector<Node*> &graph) {
+	int n;
+	cout << "Enter number of nodes\n";
+	cin >> n;
 
+	for (int i=0;i<n;i++){
+		graph.push_back(new Node);
+	}
 }
 
 
 // Graph Implementation in C++ without using STL
 int main()
 {
+
+vector<Node*> graph;
+
+createNodes(graph);
+
+
+cout << graph.size() << "\n";
+
+return 0;
 
 }
