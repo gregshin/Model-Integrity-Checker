@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <string>
+
 using namespace std;
 
 struct Node {
@@ -11,27 +13,38 @@ struct Node {
 int main()
 {
 
-int num=1;
+int num;
 
-cout << "Enter number of nodes\n";
-cin >> num;
+// cout << "Enter number of nodes\n";
+// cin >> num;
 
-vector<Node*> graph;
+// vector<Node*> graph;
 
-for (int i=0;i<num;i++){
-	graph.push_back(new Node);
-}
+// for (int i=0;i<num;i++){
+// 	graph.push_back(new Node);
+// }
 
-cout << graph.size();
+// cout << "graph has " << graph.size() << " nodes\n\n";
 
-// Node* test = new Node;
+// Node* temp = graph.at(0);
 
-// graph.push_back(test);
+// temp->name=5;
 
-// Node* node = graph.at(0);
+// cout << "node name: " << temp->name << "\n\n";
 
-// node->name=1;
-// cout << node->name << "\n";
+// cout << "truth vector size: " << temp->truths.size() << "\n\n";
 
+// char temp2 = 'a';
+
+// temp->truths.push_back(temp2);
+// cout << "truth vector size: " << temp->truths.size() << "\n\n";
+
+// cout << temp->truths.at(0);
+
+char x;
+
+x= 'a';
+
+cout << x << "\n";
 return 0;
 }

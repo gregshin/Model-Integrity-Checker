@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <string>
+
 using namespace std;
 
 // Data structure to store Adjacency list nodes
@@ -9,25 +11,25 @@ struct Node {
 	vector<Node*> edges;
 };
 
-class Graph
-{
-	// number of nodes
-	int N;
+// class Graph
+// {
+// 	// number of nodes
+// 	int N;
 
-public:
-	// pointer to start of adjacency list
-	Node**head;
+// public:
+// 	// pointer to start of adjacency list
+// 	Node**head;
 
-	// constructor
-	Graph(Node*headNode, int N){
-		head = &headNode;
-	}
+// 	// constructor
+// 	Graph(Node*headNode, int N){
+// 		head = &headNode;
+// 	}
 
-	// Destructor
-	~Graph() {
-		delete head;
-	}
-};
+// 	// Destructor
+// 	~Graph() {
+// 		delete head;
+// 	}
+// };
 
 void createNodes(vector<Node*> &graph) {
 	int n;
@@ -36,6 +38,26 @@ void createNodes(vector<Node*> &graph) {
 
 	for (int i=0;i<n;i++){
 		graph.push_back(new Node);
+
+		char cont;
+		
+		cout << "Does node " << i << " have any truths? y or \n\n";
+		cin >> cont;
+
+		while (cont == 'y'){
+			Node* temp = graph.at(i);
+			cout << "What is true? ";
+			
+			char truth;
+			cin >> truth;
+			temp->truths.push_back(truth);
+
+			cout << "\nIs anything else true? y or n";
+			cin >> cont;
+
+		}
+
+
 	}
 }
 
@@ -47,9 +69,6 @@ int main()
 vector<Node*> graph;
 
 createNodes(graph);
-
-
-cout << graph.size() << "\n";
 
 return 0;
 
