@@ -40,6 +40,8 @@ void createNodes(vector<Node*> &graph) {
 	for (int i=0;i<n;i++){
 		// create new node and push it to the graph vector
 		graph.push_back(new Node);
+		Node* temp = graph.at(i);
+		temp->name = i;
 		// sentinal for while loop
 		char cont;
 		// ask if the node has any truths
@@ -86,6 +88,11 @@ void createNodes(vector<Node*> &graph) {
 	}
 }
 
+// function to find shortest path of the graph
+// n = number of nodes, start = starting node number, dest = destination node number
+void shortestPath(int n, vector<Node*> &graph, int start, int dest){
+
+}
 
 // Graph Implementation in C++ without using STL
 int main()
