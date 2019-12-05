@@ -41,10 +41,13 @@ int num;
 
 // cout << temp->truths.at(0);
 
-char x;
+vector<Node*> graph;
 
-x= 'a';
+int n=4;
 
-cout << x << "\n";
+for (int i=0;i<n;i++){
+	graph.push_back(new Node);
+}
+
 return 0;
 }
