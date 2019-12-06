@@ -108,24 +108,85 @@ bool shortestPath(vector<Node*> &graph, int n, int start, int dest, int pred[]){
 	return false;
 
 }
+// A recursive function to print all paths from 'u' to 'd'. 
+// visited[] keeps track of vertices in current path. 
+// path[] stores actual vertices and path_index is current 
+// index in path[] 
+void printAllPathsUtil(int u, int d, bool visited[], 
+                            int path[], int &path_index, vector<Node*> graph) 
+{ 
+    // Mark the current node and store it in path[] 
+    visited[u] = true; 
+    path[path_index] = u; 
+    path_index++; 
+  
+    // If current vertex is same as destination, then print 
+    // current path[] 
+    if (u == d) 
+    { 
+        for (int i = 0; i<path_index; i++) 
+            cout << path[i] << " "; 
+        cout << endl; 
+          
+    } 
+    else // If current vertex is not destination 
+	{ 
+        // Recur for all the vertices adjacent to current vertex 
+        // list<int>::iterator i; 
+        // for (i = adj[u].begin(); i != adj[u].end(); ++i) 
+        //     if (!visited[*i]) 
+        //         printAllPathsUtil(*i, d, visited, path, path_index); 
+
+		for (int i = graph.at(u)->edges.at(i)->name; i != graph.at(u)->edges.size(); i++){
+			if (!visited[i]){
+				printAllPathsUtil(i, d, visited, path, path_index, graph);
+			}	
+		}
+
+    } 
+  
+  
+    // Remove current vertex from path[] and mark it as unvisited 
+    path_index--; 
+    visited[u] = false; 
+}
+
+// Prints all paths from 's' to 'd', num = # of vertices
+void printAllPaths(int s, int d, int num, vector<Node*> graph) 
+{ 
+    // Mark all the vertices as not visited 
+    bool *visited = new bool[num]; 
+  
+    // Create an array to store paths 
+    int *path = new int[num]; 
+    int path_index = 0; // Initialize path[] as empty 
+  
+    // Initialize all vertices as not visited 
+    for (int i = 0; i < num; i++) 
+        visited[i] = false; 
+  
+    // Call the recursive helper function to print all paths 
+    printAllPathsUtil(s, d, visited, path, path_index, graph); 
+} 
+  
 
 // Graph Implementation in C++ without using STL
 int main()
 {
 
-vector<Node*> graph;
+	vector<Node*> graph;
 
-createNodes(graph);
+	createNodes(graph);
 
-int size = graph.size();
+	int size = graph.size();
 
-int pred[size]; 
-int start = 0;
-int dest = 5;
+	int pred[size]; 
+	int start = 2;
+	int dest = 3;
 
-shortestPath(graph, size, start, dest, pred);
+	printAllPaths(start, dest, size, graph);
 
 
-return 0;
+	return 0;
 
 }
