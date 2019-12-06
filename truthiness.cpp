@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <list> 
+#include <iterator> 
 
 using namespace std;
 
@@ -10,26 +12,6 @@ struct Node {
 	vector<char> truths;
 	vector<Node*> edges;
 };
-
-// class Graph
-// {
-// 	// number of nodes
-// 	int N;
-
-// public:
-// 	// pointer to start of adjacency list
-// 	Node**head;
-
-// 	// constructor
-// 	Graph(Node*headNode, int N){
-// 		head = &headNode;
-// 	}
-
-// 	// Destructor
-// 	~Graph() {
-// 		delete head;
-// 	}
-// };
 
 void createNodes(vector<Node*> &graph) {
 	int n;
@@ -90,7 +72,40 @@ void createNodes(vector<Node*> &graph) {
 
 // function to find shortest path of the graph
 // n = number of nodes, start = starting node number, dest = destination node number
-void shortestPath(int n, vector<Node*> &graph, int start, int dest){
+bool shortestPath(vector<Node*> &graph, int n, int start, int dest, int pred[]){
+	list<int> graphQueue;
+	bool visited[n];
+
+	for (int i = 0; i < n; i++) { 
+		visited[i] = false;
+		pred[i] = -1; 
+	} 
+
+	visited[start]=true;
+	graphQueue.push_back(start);
+
+	while (!graphQueue.empty()){
+		// u is the location of whatever node is in the queue
+		int u = graphQueue.front();
+		// temp node to store the current node's pointer
+		Node* temp = graph.at(u);
+		// dequeues the visiting node
+		graphQueue.pop_front();
+		// iterate through edges of visiting node
+		for (int i=0; i < temp->edges.size(); i++){
+			 if (visited[temp->edges.at(i)->name] == false){
+				 visited[temp->edges.at(i)->name] = true;
+				 pred[temp->edges.at(i)->name] = u;
+				 graphQueue.push_back(temp->edges.at(i)->name);
+
+				 if (temp->edges.at(i)->name == dest){
+					 return true;
+				 }
+			 }
+		}
+
+	}
+	return false;
 
 }
 
@@ -101,6 +116,15 @@ int main()
 vector<Node*> graph;
 
 createNodes(graph);
+
+int size = graph.size();
+
+int pred[size]; 
+int start = 0;
+int dest = 5;
+
+shortestPath(graph, size, start, dest, pred);
+
 
 return 0;
 
