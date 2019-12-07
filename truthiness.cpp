@@ -12,6 +12,9 @@ struct Node {
 	vector<char> truths;
 	vector<Node*> edges;
 };
+struct Path {
+	vector<int> path;
+};
 
 void createNodes(vector<Node*> &graph) {
 	int n;
@@ -113,7 +116,7 @@ bool shortestPath(vector<Node*> &graph, int n, int start, int dest, int pred[]){
 // path[] stores actual vertices and path_index is current 
 // index in path[] 
 void printAllPathsUtil(int u, int d, bool visited[], 
-                            int path[], int &path_index, vector<Node*> graph, vector<vector<int> > paths) 
+                            int path[], int &path_index, vector<Node*> graph, vector<Path*> &paths) 
 { 
     // Mark the current node and store it in path[] 
     visited[u] = true; 
@@ -124,13 +127,12 @@ void printAllPathsUtil(int u, int d, bool visited[],
     // current path[] 
     if (u == d) 
     { 
-		vector<int> route;
+		// vector<int> route;
+		paths.push_back(new Path);
         for (int i = 0; i<path_index; i++) {
-            cout << path[i] << " "; 
-			route.push_back(path[i]);
+			paths.back()->path.push_back(path[i]);
 		}
-        cout << endl; 
-        paths.push_back(route);
+        cout << endl; 	
     } 
     else // If current vertex is not destination 
 	{ 
@@ -152,7 +154,7 @@ void printAllPathsUtil(int u, int d, bool visited[],
 }
 
 // Prints all paths from 's' to 'd', num = # of vertices
-void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<vector<int> > paths) 
+void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<Path*> &paths) 
 { 
     // Mark all the vertices as not visited 
     bool *visited = new bool[num]; 
@@ -167,6 +169,18 @@ void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<vector<int
   
     // Call the recursive helper function to print all paths 
     printAllPathsUtil(s, d, visited, path, path_index, graph, paths); 
+
+	//print all paths
+
+	for (int i=0;i<paths.size();i++){
+		cout << "path " << i << "\n";
+		for (int u=0;u<paths.at(i)->path.size();u++){
+			cout << paths.at(i)->path.at(u);
+		}
+		cout << endl;
+		
+	}
+	cout << endl;
 } 
 
 // Graph Implementation in C++
@@ -183,8 +197,7 @@ int main()
 	int start = 2;
 	int dest = 3;
 
-	vector<vector<int> > paths;
-	int counter=0;
+	vector<Path*> paths;
 
 	printAllPaths(start, dest, size, graph, paths);
 
