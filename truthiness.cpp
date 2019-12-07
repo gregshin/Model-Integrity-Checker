@@ -3,6 +3,7 @@
 #include <string>
 #include <list> 
 #include <iterator> 
+#include <string>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ struct Node {
 };
 struct Path {
 	vector<int> path;
-};
+};	
 
 void createNodes(vector<Node*> &graph) {
 	int n;
@@ -116,7 +117,7 @@ bool shortestPath(vector<Node*> &graph, int n, int start, int dest, int pred[]){
 // path[] stores actual vertices and path_index is current 
 // index in path[] 
 void printAllPathsUtil(int u, int d, bool visited[], 
-                            int path[], int &path_index, vector<Node*> graph, vector<Path*> &paths) 
+                            int path[], int &path_index, vector<Node*> graph, vector<Path*> paths) 
 { 
     // Mark the current node and store it in path[] 
     visited[u] = true; 
@@ -154,7 +155,7 @@ void printAllPathsUtil(int u, int d, bool visited[],
 }
 
 // Prints all paths from 's' to 'd', num = # of vertices
-void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<Path*> &paths) 
+void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<Path*> paths) 
 { 
     // Mark all the vertices as not visited 
     bool *visited = new bool[num]; 
@@ -182,6 +183,21 @@ void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<Path*> &pa
 	}
 	cout << endl;
 } 
+
+bool checkX(vector<Node*> graph, vector<Path*> paths, char p){
+
+	for (int i=0; i<paths.size();i++){
+		int node=paths.at(i)->path.at(1);
+		
+		int truthSize = graph.at(node)->truths.size();
+		for (int i=0; i<truthSize;i++){
+			if (graph.at(node)->truths.at(i) == p){
+				return true;
+			} 
+		}
+	}
+	return false;
+}
 
 // Graph Implementation in C++
 int main()
