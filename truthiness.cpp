@@ -113,7 +113,7 @@ bool shortestPath(vector<Node*> &graph, int n, int start, int dest, int pred[]){
 // path[] stores actual vertices and path_index is current 
 // index in path[] 
 void printAllPathsUtil(int u, int d, bool visited[], 
-                            int path[], int &path_index, vector<Node*> graph) 
+                            int path[], int &path_index, vector<Node*> graph, vector<vector<int> > paths) 
 { 
     // Mark the current node and store it in path[] 
     visited[u] = true; 
@@ -124,25 +124,25 @@ void printAllPathsUtil(int u, int d, bool visited[],
     // current path[] 
     if (u == d) 
     { 
-        for (int i = 0; i<path_index; i++) 
+		vector<int> route;
+        for (int i = 0; i<path_index; i++) {
             cout << path[i] << " "; 
+			route.push_back(path[i]);
+		}
         cout << endl; 
-          
+        paths.push_back(route);
     } 
     else // If current vertex is not destination 
 	{ 
-        // Recur for all the vertices adjacent to current vertex 
-        // list<int>::iterator i; 
-        // for (i = adj[u].begin(); i != adj[u].end(); ++i) 
-        //     if (!visited[*i]) 
-        //         printAllPathsUtil(*i, d, visited, path, path_index); 
+		vector<Node*>::iterator i;
+		for (i=graph.at(u)->edges.begin();i != graph.at(u)->edges.end(); ++i){
+			
+			Node* temp = *i;
 
-		for (int i = graph.at(u)->edges.at(i)->name; i != graph.at(u)->edges.size(); i++){
-			if (!visited[i]){
-				printAllPathsUtil(i, d, visited, path, path_index, graph);
-			}	
+			if (!visited[temp->name]){
+				printAllPathsUtil(temp->name, d, visited, path, path_index, graph, paths);
+			}
 		}
-
     } 
   
   
@@ -152,7 +152,7 @@ void printAllPathsUtil(int u, int d, bool visited[],
 }
 
 // Prints all paths from 's' to 'd', num = # of vertices
-void printAllPaths(int s, int d, int num, vector<Node*> graph) 
+void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<vector<int> > paths) 
 { 
     // Mark all the vertices as not visited 
     bool *visited = new bool[num]; 
@@ -166,11 +166,10 @@ void printAllPaths(int s, int d, int num, vector<Node*> graph)
         visited[i] = false; 
   
     // Call the recursive helper function to print all paths 
-    printAllPathsUtil(s, d, visited, path, path_index, graph); 
+    printAllPathsUtil(s, d, visited, path, path_index, graph, paths); 
 } 
-  
 
-// Graph Implementation in C++ without using STL
+// Graph Implementation in C++
 int main()
 {
 
@@ -184,9 +183,10 @@ int main()
 	int start = 2;
 	int dest = 3;
 
-	printAllPaths(start, dest, size, graph);
+	vector<vector<int> > paths;
+	int counter=0;
 
+	printAllPaths(start, dest, size, graph, paths);
 
 	return 0;
-
 }

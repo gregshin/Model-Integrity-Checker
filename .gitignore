@@ -31,3 +31,9 @@
 *.out
 *.app
 test
+*.json
+*.json
+*.plist
+truthiness.dSYM/Contents/Resources/DWARF/truthiness
+allPaths.dSYM/Contents/Resources/DWARF/allPaths
+.vscode/settings.json
