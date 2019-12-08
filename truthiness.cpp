@@ -241,12 +241,13 @@ bool checkU (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 		for (int g=0; g < paths.at(i)->path.size();g++){
 			// setinel boolean for if the truths are valid at the node
 			bool valid = false;
-			bool pExists;
 			char currTruth = p;
+			bool pExists = false;
+			bool qExists = false;
 			int node = paths.at(i)->path.at(g);
 			// check the corresponding node in graph and loop through the truths
 			for (int h=0; h < graph.at(node)->truths.size(); h++){
-				pExists = false;
+
 
 				if (g==0 && graph.at(node)->truths.at(h) == q){
 					valid = false;
@@ -263,22 +264,27 @@ bool checkU (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 					pExists = true;
 					valid = true;
 				} else if (g!=0 && graph.at(node)->truths.at(h) == q && currTruth == p){
-					currTruth = q;
+					qExists = true;
+
 					valid = true;
 					// note: does not just return true because we need to check to sese if p exists at the same time
 				}
-
-				if (pExists == false){
-					valid = false;
-					break;
-				}
 			}
-			if (g==0 && currTruth != p){
+			// invalidation criteria
+			// if it's the first node and p does not exist, path is invalid
+			if (g==0 && pExists == false){
 				valid = false;
 				break;
-			}
-			// put stuff outside the truth loop to compute
-			if (valid == true && currTruth == q){
+			// if it's the first node and q exists, path is invalid
+			} else if (g==0 && qExists == true){
+				valid = false;
+				break;
+			// if p and q exist at the same time, path is invalid
+			} else if (pExists == true && qExists == true){
+				valid = false;
+				break;
+			// if the path is valid and q exists, return true
+			} else if (valid == true && qExists == true){
 				return true;
 			}
 		}
@@ -356,10 +362,11 @@ int main()
 	printAllPaths(start, dest, size, graph, paths);
 
 	char p = 'p';
+	char q = 'q';
 
-	bool validity = checkG(graph, paths, p);
+	bool validity = checkU(graph, paths, p, q);
 
-	cout << "Checking if X(p) is true\n";
+	cout << "Checking if F(p) is true\n";
 	if (validity == true){
 		cout << "valid\n";
 		cout << endl;
