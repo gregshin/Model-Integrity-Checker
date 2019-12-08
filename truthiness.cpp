@@ -184,7 +184,9 @@ void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<Path*> pat
 	cout << endl;
 } 
 
+// Next
 bool checkX(vector<Node*> graph, vector<Path*> paths, char p){
+
 	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
 		// start at the 2nd node
@@ -193,15 +195,17 @@ bool checkX(vector<Node*> graph, vector<Path*> paths, char p){
 		int truthSize = graph.at(node)->truths.size();
 		// for each truth, check if one of them matches p
 		for (int u=0; u<truthSize;u++){
-			if (graph.at(node)->truths.at(u) != p){
-				return false;
+			if (graph.at(node)->truths.at(u) == p){
+				return true;
 			} 
 		}
 	}
-	return true;
+	return false;
 }
 
+// Global
 bool checkG(vector<Node*> graph, vector<Path*> paths, char p) {
+	bool valid = false;
 	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
 		// for each node number in each path
@@ -210,17 +214,85 @@ bool checkG(vector<Node*> graph, vector<Path*> paths, char p) {
 			// check the corresponding node in graph and loop through the truths
 			for (int h=0; h < graph.at(node)->truths.size(); h++){
 				// if the truth != the given p, return false
-				if (graph.at(node)->truths.at(h) != p) {
-					return false;
+				if (graph.at(node)->truths.at(h) == p) {
+					// if the desired truth is found, change valid to true and break the loop
+					valid = true;
+					break;
+				} else {
+					valid = false;
+				}
+			}
+		}
+		// if a valid path is found, return true
+		if (valid == true){
+			return true;
+		}
+	}
+	// return true if all the paths's truths have have checked
+	return false;
+}
+
+// Future
+bool checkF (vector<Node*> graph, vector<Path*> paths, char p){
+	// for each Path in paths
+	for (int i=0; i<paths.size();i++){
+		// for each node number in each path
+		for (int g=0; g < paths.at(i)->path.size();g++){
+			int node = paths.at(i)->path.at(g);
+			// check the corresponding node in graph and loop through the truths
+			for (int h=0; h < graph.at(node)->truths.size(); h++){
+				// if the truth != the given p, return false
+				if (graph.at(node)->truths.at(h) == p) {
+					return true;
 				}
 			}
 		}
 	}
 	// return true if all the paths's truths have have checked
-	return true;
+	return false;
 }
+bool checkU (vector<Node*> graph, vector<Path*> paths, char p, char q){
 
-
+	// for each Path in paths
+	for (int i=0; i<paths.size();i++){
+		// for each node number in each path
+		for (int g=0; g < paths.at(i)->path.size();g++){
+			// setinel boolean for if the truths are valid at the node
+			bool valid = false;
+			char currTruth = p;
+			int node = paths.at(i)->path.at(g);
+			// check the corresponding node in graph and loop through the truths
+			for (int h=0; h < graph.at(node)->truths.size(); h++){
+				if (g==0 && graph.at(node)->truths.at(h) == q){
+					valid = false;
+					break;
+				} else if (g==0 && graph.at(node)->truths.at(h) == p){
+					valid = true;
+				}
+				if (g!=0 && graph.at(node)->truths.at(h) == q){
+					currTruth = q;
+				}
+				// break if both p and q are true at the same time
+				if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == q){
+					valid = false;
+					break;
+				} else if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == p){
+					valid = true;
+				} else if (g!=0 && graph.at(node)->truths.at(h) == q && currTruth == p){
+					currTruth = q;
+					valid = true;
+				}
+			}
+			// put stuff outside the truth loop to compute
+			if (valid == true && currTruth == q){
+				return true;
+			}
+		}
+		return false;
+	}
+	// return true if all the paths's truths have have checked
+	return false;
+}
 // Graph Implementation in C++
 int main()
 {
