@@ -269,9 +269,6 @@ bool checkU (vector<Node*> graph, vector<Path*> paths, char p, char q){
 				} else if (g==0 && graph.at(node)->truths.at(h) == p){
 					valid = true;
 				}
-				if (g!=0 && graph.at(node)->truths.at(h) == q){
-					currTruth = q;
-				}
 				// break if both p and q are true at the same time
 				if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == q){
 					valid = false;
@@ -288,7 +285,57 @@ bool checkU (vector<Node*> graph, vector<Path*> paths, char p, char q){
 				return true;
 			}
 		}
-		return false;
+	}
+	// return true if all the paths's truths have have checked
+	return false;
+}
+// check w
+bool checkW (vector<Node*> graph, vector<Path*> paths, char p, char q){
+	// for each Path in paths
+	for (int i=0; i<paths.size();i++){
+		// for each node number in each path
+		char currTruth = p;
+		bool valid = false;
+		for (int g=0; g < paths.at(i)->path.size();g++){
+			// setinel boolean for if the truths are valid at the node
+			currTruth = p;
+			int node = paths.at(i)->path.at(g);
+			// check the corresponding node in graph and loop through the truths
+			for (int h=0; h < graph.at(node)->truths.size(); h++){
+				bool pExist = false;
+
+				if (g==0 && graph.at(node)->truths.at(h) == q){
+					valid = false;
+					break;
+				} else if (g==0 && graph.at(node)->truths.at(h) == p){
+					valid = true;
+					pExist = true;
+				}
+				// break if both p and q are true at the same time
+				if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == q){
+					valid = false;
+					break;
+				} else if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == p){
+					valid = true;
+					pExist = true;
+				} else if (g!=0 && graph.at(node)->truths.at(h) == q && currTruth == p){
+					currTruth = q;
+					valid = true;
+					break;
+				}
+				if (pExist == false){
+					valid = false;
+					break;
+				}
+			}
+			// put stuff outside the truth loop to compute
+			if (valid == true && currTruth == q){
+				return true;
+			}
+		}
+		if (valid == true && currTruth == p){
+			return true;
+		}
 	}
 	// return true if all the paths's truths have have checked
 	return false;
