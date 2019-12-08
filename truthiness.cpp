@@ -185,18 +185,20 @@ void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<Path*> pat
 } 
 
 bool checkX(vector<Node*> graph, vector<Path*> paths, char p){
-
+	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
+		// start at the 2nd node
 		int node = paths.at(i)->path.at(1);
-		
+		// check how many truths are in the node we're checking
 		int truthSize = graph.at(node)->truths.size();
+		// for each truth, check if one of them matches p
 		for (int u=0; u<truthSize;u++){
-			if (graph.at(node)->truths.at(u) == p){
-				return true;
+			if (graph.at(node)->truths.at(u) != p){
+				return false;
 			} 
 		}
 	}
-	return false;
+	return true;
 }
 
 bool checkG(vector<Node*> graph, vector<Path*> paths, char p) {
