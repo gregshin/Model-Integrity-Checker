@@ -187,17 +187,37 @@ void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<Path*> pat
 bool checkX(vector<Node*> graph, vector<Path*> paths, char p){
 
 	for (int i=0; i<paths.size();i++){
-		int node=paths.at(i)->path.at(1);
+		int node = paths.at(i)->path.at(1);
 		
 		int truthSize = graph.at(node)->truths.size();
-		for (int i=0; i<truthSize;i++){
-			if (graph.at(node)->truths.at(i) == p){
+		for (int u=0; u<truthSize;u++){
+			if (graph.at(node)->truths.at(u) == p){
 				return true;
 			} 
 		}
 	}
 	return false;
 }
+
+bool checkG(vector<Node*> graph, vector<Path*> paths, char p) {
+	// for each Path in paths
+	for (int i=0; i<paths.size();i++){
+		// for each node number in each path
+		for (int g=0; g < paths.at(i)->path.size();g++){
+			int node = paths.at(i)->path.at(g);
+			// check the corresponding node in graph and loop through the truths
+			for (int h=0; h < graph.at(node)->truths.size(); h++){
+				// if the truth != the given p, return false
+				if (graph.at(node)->truths.at(h) != p) {
+					return false;
+				}
+			}
+		}
+	}
+	// return true if all the paths's truths have have checked
+	return true;
+}
+
 
 // Graph Implementation in C++
 int main()
