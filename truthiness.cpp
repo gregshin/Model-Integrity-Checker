@@ -16,12 +16,11 @@ struct Node {
 struct Path {
 	vector<int> path;
 };	
-
+// function to create graph populated by nodes
 void createNodes(vector<Node*> &graph) {
 	int n;
 	cout << "Enter number of nodes\n";
 	cin >> n;
-
 	// create nodes and record truths
 	for (int i=0;i<n;i++){
 		// create new node and push it to the graph vector
@@ -33,7 +32,6 @@ void createNodes(vector<Node*> &graph) {
 		// ask if the node has any truths
 		cout << "Does node " << i << " have any truths? y or n\n";
 		cin >> cont;
-
 		// while cont == y, keep adding truths to the vector
 		while (cont == 'y'){
 			// save reference to what node we're adding truths to
@@ -48,7 +46,6 @@ void createNodes(vector<Node*> &graph) {
 			cin >> cont;
 		}
 	}
-
 	// define the edges for each node
 	for (int i=0;i<n;i++){
 		// sentinel for while loop
@@ -56,7 +53,6 @@ void createNodes(vector<Node*> &graph) {
 		// ask if the node has any edges
 		cout << "Does node " << i << " have any edges? y or n \n";
 		cin >> cont;		
-
 		// while cont == y, keep adding edges to the vector
 		while (cont == 'y'){
 			// save reference to what node we're adding truths to
@@ -73,18 +69,21 @@ void createNodes(vector<Node*> &graph) {
 		}
 	}
 }
-
 // function to find shortest path of the graph
 // n = number of nodes, start = starting node number, dest = destination node number
+// saving for later
 bool shortestPath(vector<Node*> &graph, int n, int start, int dest, int pred[]){
 	list<int> graphQueue;
 	bool visited[n];
-
+	// loop through # of nodes
+	// fill visited with false
+	// populate pred with -1
 	for (int i = 0; i < n; i++) { 
 		visited[i] = false;
 		pred[i] = -1; 
 	} 
-
+	// mark the starting node as visited
+	// push starting node to the queue
 	visited[start]=true;
 	graphQueue.push_back(start);
 
@@ -98,26 +97,24 @@ bool shortestPath(vector<Node*> &graph, int n, int start, int dest, int pred[]){
 		// iterate through edges of visiting node
 		for (int i=0; i < temp->edges.size(); i++){
 			 if (visited[temp->edges.at(i)->name] == false){
-				 visited[temp->edges.at(i)->name] = true;
-				 pred[temp->edges.at(i)->name] = u;
-				 graphQueue.push_back(temp->edges.at(i)->name);
-
-				 if (temp->edges.at(i)->name == dest){
-					 return true;
-				 }
-			 }
+				visited[temp->edges.at(i)->name] = true;
+				pred[temp->edges.at(i)->name] = u;
+				graphQueue.push_back(temp->edges.at(i)->name);
+				// retrun true if we're at the destination
+				if (temp->edges.at(i)->name == dest){
+					return true;
+				}
+			}
 		}
 
 	}
 	return false;
 }
-// A recursive function to print all paths from 'u' to 'd'. 
+// print all paths from 'u' to 'd'. 
 // visited[] keeps track of vertices in current path. 
 // path[] stores actual vertices and path_index is current 
 // index in path[] 
-void printAllPathsUtil(int u, int d, bool visited[], 
-                            int path[], int &path_index, vector<Node*> graph, vector<Path*> paths) 
-{ 
+void printAllPathsUtil(int u, int d, bool visited[], int path[], int &path_index, vector<Node*> &graph, vector<Path*> &paths){ 
     // Mark the current node and store it in path[] 
     visited[u] = true; 
     path[path_index] = u; 
@@ -133,59 +130,50 @@ void printAllPathsUtil(int u, int d, bool visited[],
 			paths.back()->path.push_back(path[i]);
 		}
         cout << endl; 	
-    } 
-    else // If current vertex is not destination 
-	{ 
+    // If current vertex is not destination
+	} else { 
+		// initialize vector iterator
 		vector<Node*>::iterator i;
+		// iterate through edges of node
 		for (i=graph.at(u)->edges.begin();i != graph.at(u)->edges.end(); ++i){
-			
 			Node* temp = *i;
-
+			// recurse with the child node as starting node
 			if (!visited[temp->name]){
 				printAllPathsUtil(temp->name, d, visited, path, path_index, graph, paths);
 			}
 		}
     } 
-  
-  
     // Remove current vertex from path[] and mark it as unvisited 
     path_index--; 
     visited[u] = false; 
 }
-
 // Prints all paths from 's' to 'd', num = # of vertices
-void printAllPaths(int s, int d, int num, vector<Node*> graph, vector<Path*> paths) 
-{ 
+void printAllPaths(int s, int d, int num, vector<Node*> &graph, vector<Path*> &paths){ 
     // Mark all the vertices as not visited 
-    bool *visited = new bool[num]; 
-  
+    bool *visited = new bool[num];  
     // Create an array to store paths 
     int *path = new int[num]; 
-    int path_index = 0; // Initialize path[] as empty 
-  
+	// Initialize path[] as empty 
+    int path_index = 0; 
     // Initialize all vertices as not visited 
-    for (int i = 0; i < num; i++) 
+    for (int i = 0; i < num; i++){
         visited[i] = false; 
-  
-    // Call the recursive helper function to print all paths 
+	}
+    // Call the utility function to print all paths 
     printAllPathsUtil(s, d, visited, path, path_index, graph, paths); 
-
 	//print all paths
-
 	for (int i=0;i<paths.size();i++){
-		cout << "path " << i << "\n";
+		cout << "path " << i << ": ";
 		for (int u=0;u<paths.at(i)->path.size();u++){
-			cout << paths.at(i)->path.at(u);
+			cout << paths.at(i)->path.at(u) << "->";
 		}
 		cout << endl;
-		
 	}
 	cout << endl;
 } 
 
 // Next
-bool checkX(vector<Node*> graph, vector<Path*> paths, char p){
-
+bool checkX(vector<Node*> &graph, vector<Path*> &paths, char p){
 	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
 		// start at the 2nd node
@@ -201,9 +189,8 @@ bool checkX(vector<Node*> graph, vector<Path*> paths, char p){
 	}
 	return false;
 }
-
 // Global
-bool checkG(vector<Node*> graph, vector<Path*> paths, char p) {
+bool checkG(vector<Node*> &graph, vector<Path*> &paths, char p) {
 	bool valid = false;
 	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
@@ -217,9 +204,7 @@ bool checkG(vector<Node*> graph, vector<Path*> paths, char p) {
 					// if the desired truth is found, change valid to true and break the loop
 					valid = true;
 					break;
-				} else {
-					valid = false;
-				}
+				} 
 			}
 		}
 		// if a valid path is found, return true
@@ -230,9 +215,8 @@ bool checkG(vector<Node*> graph, vector<Path*> paths, char p) {
 	// return true if all the paths's truths have have checked
 	return false;
 }
-
 // Future
-bool checkF (vector<Node*> graph, vector<Path*> paths, char p){
+bool checkF (vector<Node*> &graph, vector<Path*> &paths, char p){
 	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
 		// for each node number in each path
@@ -250,8 +234,7 @@ bool checkF (vector<Node*> graph, vector<Path*> paths, char p){
 	// return true if all the paths's truths have have checked
 	return false;
 }
-bool checkU (vector<Node*> graph, vector<Path*> paths, char p, char q){
-
+bool checkU (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
 		// for each node number in each path
@@ -304,7 +287,7 @@ bool checkU (vector<Node*> graph, vector<Path*> paths, char p, char q){
 	return false;
 }
 // check w
-bool checkW (vector<Node*> graph, vector<Path*> paths, char p, char q){
+bool checkW (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
 		// for each node number in each path
@@ -372,16 +355,17 @@ int main()
 
 	printAllPaths(start, dest, size, graph, paths);
 
-	// char p = 'p';
+	char p = 'p';
 
-	// bool validity = checkX(graph, paths, p);
+	bool validity = checkG(graph, paths, p);
 
-	// if (validity == true){
-	// 	cout << "valid";
-	// 	cout << endl;
-	// } else if (validity == false){
-	// 	cout << "not valid";
-	// 	cout << endl;
-	// }
+	cout << "Checking if X(p) is true\n";
+	if (validity == true){
+		cout << "valid\n";
+		cout << endl;
+	} else if (validity == false){
+		cout << "not valid\n";
+		cout << endl;
+	}
 	return 0;
 }
