@@ -44,7 +44,7 @@ void createNodes(vector<Node*> &graph) {
 			cin >> truth;
 			temp->truths.push_back(truth);
 			// ask if anything else is true
-			cout << "\nIs anything else true? y or n\n";
+			cout << "Is anything else true? y or n\n";
 			cin >> cont;
 		}
 	}
@@ -110,7 +110,6 @@ bool shortestPath(vector<Node*> &graph, int n, int start, int dest, int pred[]){
 
 	}
 	return false;
-
 }
 // A recursive function to print all paths from 'u' to 'd'. 
 // visited[] keeps track of vertices in current path. 
@@ -259,14 +258,18 @@ bool checkU (vector<Node*> graph, vector<Path*> paths, char p, char q){
 		for (int g=0; g < paths.at(i)->path.size();g++){
 			// setinel boolean for if the truths are valid at the node
 			bool valid = false;
+			bool pExists;
 			char currTruth = p;
 			int node = paths.at(i)->path.at(g);
 			// check the corresponding node in graph and loop through the truths
 			for (int h=0; h < graph.at(node)->truths.size(); h++){
+				pExists = false;
+
 				if (g==0 && graph.at(node)->truths.at(h) == q){
 					valid = false;
 					break;
 				} else if (g==0 && graph.at(node)->truths.at(h) == p){
+					pExists = true;
 					valid = true;
 				}
 				// break if both p and q are true at the same time
@@ -274,11 +277,22 @@ bool checkU (vector<Node*> graph, vector<Path*> paths, char p, char q){
 					valid = false;
 					break;
 				} else if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == p){
+					pExists = true;
 					valid = true;
 				} else if (g!=0 && graph.at(node)->truths.at(h) == q && currTruth == p){
 					currTruth = q;
 					valid = true;
+					// note: does not just return true because we need to check to sese if p exists at the same time
 				}
+
+				if (pExists == false){
+					valid = false;
+					break;
+				}
+			}
+			if (g==0 && currTruth != p){
+				valid = false;
+				break;
 			}
 			// put stuff outside the truth loop to compute
 			if (valid == true && currTruth == q){
@@ -358,5 +372,16 @@ int main()
 
 	printAllPaths(start, dest, size, graph, paths);
 
+	// char p = 'p';
+
+	// bool validity = checkX(graph, paths, p);
+
+	// if (validity == true){
+	// 	cout << "valid";
+	// 	cout << endl;
+	// } else if (validity == false){
+	// 	cout << "not valid";
+	// 	cout << endl;
+	// }
 	return 0;
 }
