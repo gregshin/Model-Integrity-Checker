@@ -110,17 +110,17 @@ bool shortestPath(vector<Node*> &graph, int n, int start, int dest, int pred[]){
 	}
 	return false;
 }
-// print all paths from 'u' to 'd'. 
+// Find all paths from 'u' to 'd'. 
 // visited[] keeps track of vertices in current path. 
 // path[] stores actual vertices and path_index is current 
 // index in path[] 
-void printAllPathsUtil(int u, int d, bool visited[], int path[], int &path_index, vector<Node*> &graph, vector<Path*> &paths){ 
+void findAllPathsUtil(int u, int d, bool visited[], int path[], int &path_index, vector<Node*> &graph, vector<Path*> &paths){ 
     // Mark the current node and store it in path[] 
     visited[u] = true; 
     path[path_index] = u; 
     path_index++; 
   
-    // If current vertex is same as destination, then print 
+    // If current vertex is same as destination, then save 
     // current path[] 
     if (u == d) 
     { 
@@ -139,7 +139,7 @@ void printAllPathsUtil(int u, int d, bool visited[], int path[], int &path_index
 			Node* temp = *i;
 			// recurse with the child node as starting node
 			if (!visited[temp->name]){
-				printAllPathsUtil(temp->name, d, visited, path, path_index, graph, paths);
+				findAllPathsUtil(temp->name, d, visited, path, path_index, graph, paths);
 			}
 		}
     } 
@@ -147,8 +147,8 @@ void printAllPathsUtil(int u, int d, bool visited[], int path[], int &path_index
     path_index--; 
     visited[u] = false; 
 }
-// Prints all paths from 's' to 'd', num = # of vertices
-void printAllPaths(int s, int d, int num, vector<Node*> &graph, vector<Path*> &paths){ 
+// finds all paths from 's' to 'd', num = # of vertices
+void findAllPaths(int s, int d, int num, vector<Node*> &graph, vector<Path*> &paths){ 
     // Mark all the vertices as not visited 
     bool *visited = new bool[num];  
     // Create an array to store paths 
@@ -159,9 +159,9 @@ void printAllPaths(int s, int d, int num, vector<Node*> &graph, vector<Path*> &p
     for (int i = 0; i < num; i++){
         visited[i] = false; 
 	}
-    // Call the utility function to print all paths 
-    printAllPathsUtil(s, d, visited, path, path_index, graph, paths); 
-	//print all paths
+    // Call the utility function to find all paths 
+    findAllPathsUtil(s, d, visited, path, path_index, graph, paths); 
+	//find all paths
 	for (int i=0;i<paths.size();i++){
 		cout << "path " << i << ": ";
 		for (int u=0;u<paths.at(i)->path.size();u++){
@@ -248,7 +248,6 @@ bool checkU (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 			// check the corresponding node in graph and loop through the truths
 			for (int h=0; h < graph.at(node)->truths.size(); h++){
 
-
 				if (g==0 && graph.at(node)->truths.at(h) == q){
 					valid = false;
 					break;
@@ -265,7 +264,7 @@ bool checkU (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 					valid = true;
 				} else if (g!=0 && graph.at(node)->truths.at(h) == q && currTruth == p){
 					qExists = true;
-
+					currTruth = q;
 					valid = true;
 					// note: does not just return true because we need to check to sese if p exists at the same time
 				}
@@ -283,6 +282,10 @@ bool checkU (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 			} else if (pExists == true && qExists == true){
 				valid = false;
 				break;
+			// if neither p nor q exist in a node, path is invalid
+			} else if (pExists != true && qExists != true){
+				valid = false;
+				break;
 			// if the path is valid and q exists, return true
 			} else if (valid == true && qExists == true){
 				return true;
@@ -297,22 +300,23 @@ bool checkW (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
 		// for each node number in each path
-		char currTruth = p;
-		bool valid = false;
 		for (int g=0; g < paths.at(i)->path.size();g++){
 			// setinel boolean for if the truths are valid at the node
-			currTruth = p;
+			bool valid = false;
+			char currTruth = p;
+			bool pExists = false;
+			bool qExists = false;
 			int node = paths.at(i)->path.at(g);
 			// check the corresponding node in graph and loop through the truths
 			for (int h=0; h < graph.at(node)->truths.size(); h++){
-				bool pExist = false;
-
+			
 				if (g==0 && graph.at(node)->truths.at(h) == q){
+					qExists = true;
 					valid = false;
 					break;
 				} else if (g==0 && graph.at(node)->truths.at(h) == p){
+					pExists = true;
 					valid = true;
-					pExist = true;
 				}
 				// break if both p and q are true at the same time
 				if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == q){
@@ -320,57 +324,150 @@ bool checkW (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 					break;
 				} else if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == p){
 					valid = true;
-					pExist = true;
+					pExists = true;
 				} else if (g!=0 && graph.at(node)->truths.at(h) == q && currTruth == p){
+					qExists = true;
 					currTruth = q;
 					valid = true;
-					break;
-				}
-				if (pExist == false){
-					valid = false;
-					break;
+					// note: does not just return true because we need to check to sese if p exists at the same time
 				}
 			}
-			// put stuff outside the truth loop to compute
-			if (valid == true && currTruth == q){
+			// invalidation criteria
+			// if it's the first node and p does not exist, path is invalid
+			if (g==0 && pExists == false){
+				valid = false;
+				break;
+			// if it's the first node and q exists, path is invalid
+			} else if (g==0 && qExists == true){
+				valid = false;
+				break;
+			// if p and q exist at the same time, path is invalid
+			} else if (pExists == true && qExists == true){
+				valid = false;
+				break;
+			// if neither p nor q exists in a node, path is invalid
+			} else if (pExists != true && qExists != true){
+				valid = false;
+				break;
+			// if the path is valid and q exists, return true
+			} else if (valid == true && qExists == true){
+				return true;
+			// if p stays valid until the last node, return true
+			} else if (g == graph.at(node)->truths.size()-1 && pExists == true && qExists == false){
 				return true;
 			}
-		}
-		if (valid == true && currTruth == p){
-			return true;
 		}
 	}
 	// return true if all the paths's truths have have checked
 	return false;
 }
+// check R by calling W with reversed p and q
+bool checkR(vector<Node*> &graph, vector<Path*> &paths, char p, char q){
+	if (checkW(graph, paths, q, p)==true){
+		return true;
+	} else {
+		return false;
+	}
+	return false;
+}
+
+bool validity(vector<Node*> &graph, vector<Path*> &paths){
+	// info for checking model validity
+	char formula;
+	char p;
+	char q;
+	bool validity;
+
+	cout << "What formula would you like to check? (X, G, F, U, W, or R) ";
+	cin >> formula;
+
+	// use different truth functions for different user input
+	switch(formula)
+	{
+		case 'X':
+			cout << "What truth should be checked? ";
+			cin >> p;
+			cout << "Checking if X(" << p << ") is true\n";
+			validity = checkX(graph, paths, p);
+			break;
+		case 'G':
+			cout << "What truth should be checked? ";
+			cin >> p;
+			cout << "Checking if G(" << p << ") is true\n";
+			validity = checkG(graph, paths, p);
+			break;
+		case 'F':
+			cout << "What truth should be checked? ";
+			cin >> p;
+			cout << "Checking if F(" << p << ") is true\n";
+			validity = checkF(graph, paths, p);
+			break;
+		case 'U':
+			cout << "What is the first truth to be checked? ";
+			cin >> p;
+			cout << "What is the second truth to be checked? ";
+			cin >> q;
+			cout << "Checking if " << p << "U" << q << " is true\n";
+			validity = checkU(graph, paths, p, q);
+			break;
+		case 'W':
+			cout << "What is the first truth to be checked? ";
+			cin >> p;
+			cout << "What is the second truth to be checked? ";
+			cin >> q;
+			cout << "Checking if " << p << "W" << q << " is true\n";
+			validity = checkW(graph, paths, p, q);
+			break;
+		case 'R':
+			cout << "What is the first truth to be checked? ";
+			cin >> p;
+			cout << "What is the second truth to be checked? ";
+			cin >> q;
+			cout << "Checking if " << p << "R" << q << " is true\n";
+			validity = checkW(graph, paths, p, q);
+			break;
+		default:
+			cout << "Invalid formula";
+			break;
+	}
+	return validity;
+}
 // Graph Implementation in C++
 int main()
 {
-
+	// define vector to hold nodes
 	vector<Node*> graph;
-
+	// create nodes
 	createNodes(graph);
 
+	// for use in finding shortest path
 	int size = graph.size();
-
 	int pred[size]; 
-	int start = 2;
-	int dest = 3;
+	
+	// define starting and ending nodes;
+	int start;
+	int dest;
 
+	cout << "Starting node #? ";
+	cin >> start;
+	cout << endl;
+
+	cout << "Destinatino node #? ";
+	cin >> dest;
+	cout << endl;
+
+	// create vector to hold paths
 	vector<Path*> paths;
 
-	printAllPaths(start, dest, size, graph, paths);
+	// find all paths
+	findAllPaths(start, dest, size, graph, paths);
 
-	char p = 'p';
-	char q = 'q';
+	bool valid = validity(graph, paths);
 
-	bool validity = checkU(graph, paths, p, q);
-
-	cout << "Checking if F(p) is true\n";
-	if (validity == true){
+	if (valid == true){
 		cout << "valid\n";
 		cout << endl;
-	} else if (validity == false){
+	} else if (valid == false){
 		cout << "not valid\n";
 		cout << endl;
 	}
