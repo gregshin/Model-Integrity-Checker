@@ -37,3 +37,4 @@ test
 truthiness.dSYM/Contents/Resources/DWARF/truthiness
 allPaths.dSYM/Contents/Resources/DWARF/allPaths
 .vscode/settings.json
+.DS_Store

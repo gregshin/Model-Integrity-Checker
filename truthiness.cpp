@@ -3,7 +3,8 @@
 #include <string>
 #include <list> 
 #include <iterator> 
-#include <string>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -432,13 +433,142 @@ bool validity(vector<Node*> &graph, vector<Path*> &paths){
 	}
 	return validity;
 }
+
+void nodesFromFile(int nodes, vector<Node*> &graph){
+	for (int i=0;i<nodes;i++){
+		graph.push_back(new Node);
+		Node* temp = graph.at(i);
+		temp->name = i;
+	}
+}
+
+void truthsFromFile(vector<Node*> &graph, string truths){
+
+    stringstream ss(truths);
+
+    string token;
+    string token2;
+
+    while(!ss.eof()){
+
+		stringstream num;
+		stringstream truthTemp;
+		int node;
+		char truth;
+
+        getline(ss, token, ':');
+
+		num << token;
+		num >> node;
+
+		Node* temp = graph.at(node);
+
+        getline(ss, token2, ',');
+
+		truthTemp << token2;
+		truthTemp >> truth;
+
+		temp->truths.push_back(truth);
+    }
+}
+
+void edgesFromFile(vector<Node*> &graph, string edges){
+	stringstream ss(edges);
+
+    string token;
+    string token2;
+
+	while (!ss.eof()){
+		stringstream numTemp;
+		int num;
+
+		getline(ss, token, ':');
+
+		numTemp << token;
+		numTemp >> num;
+
+		Node* node = graph.at(num);
+
+		getline(ss, token2, ',');
+
+		numTemp << token2;
+		numTemp >> num;
+
+		Node* edge = graph.at(num);
+
+		node->edges.push_back(edge);
+	}
+}
+
+void graphFromFile (string fileName, vector<Node*> &graph){
+
+    ifstream file;
+
+    stringstream nodes;
+    stringstream edges;
+	stringstream truths;
+
+    string variable;
+    string value;
+    int nodesNum;
+
+
+    file.open(fileName);
+
+    if (!file.is_open()){
+        cout << "File cannot be opened";
+        return;
+    }
+
+    while(!file.eof()){
+
+        if(!file){
+            break;
+        }
+
+        getline(file, variable, '=');
+        getline(file, value, '\n');
+
+        if (variable == "numNodes"){
+            nodes << value;
+            nodes >> nodesNum;
+        } else if (variable == "edges"){
+            edges << value;
+        } else if (variable == "truths"){
+			truths << value;
+		}
+    }
+
+    file.close();
+
+    return;
+}
+
 // Graph Implementation in C++
 int main()
-{
-	// define vector to hold nodes
+{	
+	// create vector to hold nodes
 	vector<Node*> graph;
-	// create nodes
-	createNodes(graph);
+	// sentinal for first option
+	bool validOption = false;
+
+	while (validOption == false){
+		int createType;
+
+		cout << "1: Read from File\n2: Input manually?" << endl;
+		cin >> createType;
+
+		if (createType == 1){
+			graphFromFile("graph.txt");
+		} else if (createType == 2){
+			createNodes(graph);
+			validOption == true;
+		} else {
+			cout << "Invalid option. Please try again" << endl;
+		}
+	}
+	
+
 
 	// for use in finding shortest path
 	int size = graph.size();
@@ -452,7 +582,7 @@ int main()
 	cin >> start;
 	cout << endl;
 
-	cout << "Destinatino node #? ";
+	cout << "Destination node #? ";
 	cin >> dest;
 	cout << endl;
 
