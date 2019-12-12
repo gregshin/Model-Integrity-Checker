@@ -130,7 +130,6 @@ void findAllPathsUtil(int u, int d, bool visited[], int path[], int &path_index,
         for (int i = 0; i<path_index; i++) {
 			paths.back()->path.push_back(path[i]);
 		}
-        cout << endl; 	
     // If current vertex is not destination
 	} else { 
 		// initialize vector iterator
@@ -166,7 +165,11 @@ void findAllPaths(int s, int d, int num, vector<Node*> &graph, vector<Path*> &pa
 	for (int i=0;i<paths.size();i++){
 		cout << "path " << i << ": ";
 		for (int u=0;u<paths.at(i)->path.size();u++){
-			cout << paths.at(i)->path.at(u) << "->";
+			if (u != paths.at(i)->path.size()-1){
+				cout << paths.at(i)->path.at(u) << "->";
+			} else {
+				cout << paths.at(i)->path.at(u);
+			}
 		}
 		cout << endl;
 	}
@@ -374,7 +377,6 @@ bool checkW (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 }
 // check R by calling W with reversed p and q
 bool checkR(vector<Node*> &graph, vector<Path*> &paths, char p, char q){
-
 	if (checkW(graph, paths, q, p)==true){
 		return true;
 	} else {
@@ -382,189 +384,198 @@ bool checkR(vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 	}
 	return false;
 }
-
+// validity checker
 bool validity(vector<Node*> &graph, vector<Path*> &paths){
 	// info for checking model validity
 	char formula;
 	char p;
 	char q;
 	bool validity;
-
-	cout << "What formula would you like to check? (X, G, F, U, W, or R) ";
-	cin >> formula;
-
-	// use different truth functions for different user input
-	switch(formula)
-	{
-		case 'X':
-			cout << "What truth should be checked? ";
-			cin >> p;
-			cout << "Checking if X(" << p << ") is true\n";
-			validity = checkX(graph, paths, p);
-			break;
-		case 'G':
-			cout << "What truth should be checked? ";
-			cin >> p;
-			cout << "Checking if G(" << p << ") is true\n";
-			validity = checkG(graph, paths, p);
-			break;
-		case 'F':
-			cout << "What truth should be checked? ";
-			cin >> p;
-			cout << "Checking if F(" << p << ") is true\n";
-			validity = checkF(graph, paths, p);
-			break;
-		case 'U':
-			cout << "What is the first truth to be checked? ";
-			cin >> p;
-			cout << "What is the second truth to be checked? ";
-			cin >> q;
-			cout << "Checking if " << p << "U" << q << " is true\n";
-			validity = checkU(graph, paths, p, q);
-			break;
-		case 'W':
-			cout << "What is the first truth to be checked? ";
-			cin >> p;
-			cout << "What is the second truth to be checked? ";
-			cin >> q;
-			cout << "Checking if " << p << "W" << q << " is true\n";
-			validity = checkW(graph, paths, p, q);
-			break;
-		case 'R':
-			cout << "What is the first truth to be checked? ";
-			cin >> p;
-			cout << "What is the second truth to be checked? ";
-			cin >> q;
-			cout << "Checking if " << p << "R" << q << " is true\n";
-			validity = checkR(graph, paths, p, q);
-			break;
-		default:
-			cout << "Invalid formula";
-			break;
+	bool validInput = false;
+	// while valid input is false, ask for a valid input
+	while (validInput == false){
+		cout << "What formula would you like to check? (X, G, F, U, W, or R) ";
+		cin >> formula;
+		// use different truth functions for different user input
+		switch(formula)
+		{
+			case 'X':
+				validInput = true;
+				cout << "What truth should be checked? ";
+				cin >> p;
+				cout << "Checking if X(" << p << ") is true\n";
+				validity = checkX(graph, paths, p);
+				break;
+			case 'G':
+				validInput = true;
+				cout << "What truth should be checked? ";
+				cin >> p;
+				cout << "Checking if G(" << p << ") is true\n";
+				validity = checkG(graph, paths, p);
+				break;
+			case 'F':
+				validInput = true;
+				cout << "What truth should be checked? ";
+				cin >> p;
+				cout << "Checking if F(" << p << ") is true\n";
+				validity = checkF(graph, paths, p);
+				break;
+			case 'U':
+				validInput = true;
+				cout << "What is the first truth to be checked? ";
+				cin >> p;
+				cout << "What is the second truth to be checked? ";
+				cin >> q;
+				cout << "Checking if " << p << "U" << q << " is true\n";
+				validity = checkU(graph, paths, p, q);
+				break;
+			case 'W':
+				validInput = true;
+				cout << "What is the first truth to be checked? ";
+				cin >> p;
+				cout << "What is the second truth to be checked? ";
+				cin >> q;
+				cout << "Checking if " << p << "W" << q << " is true\n";
+				validity = checkW(graph, paths, p, q);
+				break;
+			case 'R':
+				validInput = true;
+				cout << "What is the first truth to be checked? ";
+				cin >> p;
+				cout << "What is the second truth to be checked? ";
+				cin >> q;
+				cout << "Checking if " << p << "R" << q << " is true\n";
+				validity = checkR(graph, paths, p, q);
+				break;
+			default:
+				cout << "Invalid formula" << endl;
+				break;
+		}
 	}
 	return validity;
 }
-
+// create nodes based on nodes= in text file
 void nodesFromFile(int nodes, vector<Node*> &graph){
+	// for # of nodes, push a new node onto the graph and name it
 	for (int i=0;i<nodes;i++){
 		graph.push_back(new Node);
 		Node* temp = graph.at(i);
 		temp->name = i;
 	}
 }
-
+// populate node truths from file
 void truthsFromFile(vector<Node*> &graph, string truths){
-
+	// save truths to stream
     stringstream ss(truths);
-
+	// defines tokens to save substring
     string token;
     string token2;
-
+	// while it's not the end of the stream
     while(!ss.eof()){
-
+		// helper variables
 		stringstream num;
 		stringstream truthTemp;
 		int node;
 		char truth;
-
+		// read the line up to the first delimiter ':'
         getline(ss, token, ':');
-
+		// save the token to the stream so it can be re-cast as an int
 		num << token;
 		num >> node;
-
+		// get the node we're saving the truth to
 		Node* temp = graph.at(node);
-
+		// read the line up to the second delimiter ','
         getline(ss, token2, ',');
-
+		// save the token to the stream so it can be recast as a char
 		truthTemp << token2;
 		truthTemp >> truth;
-
+		// push the truth to the node
 		temp->truths.push_back(truth);
     }
 }
-
+// populate node edges from file
 void edgesFromFile(vector<Node*> &graph, string edges){
+	// save edges to stream
 	stringstream ss(edges);
-
+	// defines tokens to save substring
     string token;
     string token2;
-
+	// while it's not the end of the stream
 	while (!ss.eof()){
+		// helper variables
 		stringstream numTemp;
 		stringstream numTemp2;
 		int nodeNum = 0;
 		int edgeNum = 0;
-
+		// read the line up to the first delimiter ':'
 		getline(ss, token, ':');
-
+		// save the token to the stream so it can be re-cast as an int
 		numTemp << token;
 		numTemp >> nodeNum;
-
+		// get the node we're saving the edge to
 		Node* node = graph.at(nodeNum);
-
+		// read the line up to the second delimiter ','
 		getline(ss, token2, ',');
-
+		// save the token to the stream so it can be recast as an int
 		numTemp2 << token2;
 		numTemp2 >> edgeNum;
-
+		// get the pointer of the node the edge connects to
 		Node* edge = graph.at(edgeNum);
-
+		// push the pointer to the node
 		node->edges.push_back(edge);
-
 	}
 }
-
+// create graph from file
 void graphFromFile (string fileName, vector<Node*> &graph){
 
     ifstream file;
-
     stringstream nodes;
     stringstream edges;
 	stringstream truths;
-
     string variable;
     string value;
     int nodesNum;
 	string allEdges;
 	string allTruths;
-
-
+	// open file
     file.open(fileName);
-
+	// if the file cannot be opened, return
     if (!file.is_open()){
         cout << "File cannot be opened";
         return;
     }
-
+	// while the file is opened
     while(!file.eof()){
-
+		// break if it's the end of the file
         if(!file){
             break;
         }
-
+		// get line up to the delimiter '=' and save to variable
         getline(file, variable, '=');
+		// then get line up the the new line and save to value
         getline(file, value, '\n');
-
+		// if the variable is numNodes, then pass the value to the nodesFromFile function
         if (variable == "numNodes"){
             nodes << value;
             nodes >> nodesNum;
 			nodesFromFile(nodesNum, graph);
+		// if the variable is edges, then pass the value to the edgesFromFile function
         } else if (variable == "edges"){
             edges << value;
 			edges >> allEdges;
 			edgesFromFile(graph, allEdges);
+		// if the variable is truths, then pass the value to the truthsFromFile function
         } else if (variable == "truths"){
 			truths << value;
 			truths >> allTruths;
 			truthsFromFile(graph, allTruths);
 		}
     }
-
+	// close file
     file.close();
 
     return;
 }
-
 // Graph Implementation in C++
 int main()
 {	
@@ -590,15 +601,14 @@ int main()
 			cout << "Invalid option. Please try again" << endl;
 		}
 	}
-
 	// for use in finding shortest path
 	int size = graph.size();
 	int pred[size]; 
-	
 	// define starting and ending nodes;
 	int start;
 	int dest;
 
+	// ask for starting and ending nodes
 	cout << "Starting node #? ";
 	cin >> start;
 	cout << endl;
@@ -613,14 +623,14 @@ int main()
 	// find all paths
 	findAllPaths(start, dest, size, graph, paths);
 
+	// call validity function
 	bool valid = validity(graph, paths);
 
+	// return validity
 	if (valid == true){
-		cout << "valid\n";
-		cout << endl;
+		cout << "valid" << endl;
 	} else if (valid == false){
-		cout << "not valid\n";
-		cout << endl;
+		cout << "not valid" << endl;
 	}
 	return 0;
 }
