@@ -46,6 +46,25 @@ void parseTruths (string truths){
     }
     cout << "parse truth end" << endl;
 }
+void parseEdges (string edges){
+
+    vector<string> results;
+
+    stringstream ss(edges);
+
+    string token;
+    string token2;
+
+    
+    while(ss){
+        getline(ss, token, ':');
+        getline(ss, token2, ',');
+
+        cout << token << "\n";
+        cout << token2 << endl;
+    }
+    cout << "parse truth end" << endl;
+}
 
 
 void readFile (string fileName){
@@ -82,9 +101,10 @@ void readFile (string fileName){
             nodes >> nodesNum;
         } else if (variable == "edges"){
             edges << value;
+            parseEdges(value);
         } else if (variable == "truths"){
             truths << value;
-            parseTruths(value);
+            // parseTruths(value);
         }
     }
 

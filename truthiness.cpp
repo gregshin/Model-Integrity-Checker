@@ -200,12 +200,16 @@ bool checkG(vector<Node*> &graph, vector<Path*> &paths, char p) {
 			int node = paths.at(i)->path.at(g);
 			// check the corresponding node in graph and loop through the truths
 			for (int h=0; h < graph.at(node)->truths.size(); h++){
+				valid = false;
 				// if the truth != the given p, return false
 				if (graph.at(node)->truths.at(h) == p) {
 					// if the desired truth is found, change valid to true and break the loop
 					valid = true;
 					break;
 				} 
+			}
+			if (valid == false){
+				return false;
 			}
 		}
 		// if a valid path is found, return true
@@ -267,7 +271,7 @@ bool checkU (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 					qExists = true;
 					currTruth = q;
 					valid = true;
-					// note: does not just return true because we need to check to sese if p exists at the same time
+					// note: does not just return true because we need to check to see if p exists at the same time
 				}
 			}
 			// invalidation criteria
@@ -300,10 +304,10 @@ bool checkU (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 bool checkW (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 	// for each Path in paths
 	for (int i=0; i<paths.size();i++){
+		bool valid = false;
 		// for each node number in each path
 		for (int g=0; g < paths.at(i)->path.size();g++){
 			// setinel boolean for if the truths are valid at the node
-			bool valid = false;
 			char currTruth = p;
 			bool pExists = false;
 			bool qExists = false;
@@ -322,6 +326,7 @@ bool checkW (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 				// break if both p and q are true at the same time
 				if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == q){
 					valid = false;
+					qExists = true;
 					break;
 				} else if (g!=0 && graph.at(node)->truths.at(h) == p && currTruth == p){
 					valid = true;
@@ -335,7 +340,9 @@ bool checkW (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 			}
 			// invalidation criteria
 			// if it's the first node and p does not exist, path is invalid
-			if (g==0 && pExists == false){
+			if (valid == false){
+				break;
+			} else if (g==0 && pExists == false){
 				valid = false;
 				break;
 			// if it's the first node and q exists, path is invalid
@@ -347,16 +354,19 @@ bool checkW (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 				valid = false;
 				break;
 			// if neither p nor q exists in a node, path is invalid
-			} else if (pExists != true && qExists != true){
+			} else if (pExists == false && qExists == false){
 				valid = false;
 				break;
 			// if the path is valid and q exists, return true
 			} else if (valid == true && qExists == true){
 				return true;
 			// if p stays valid until the last node, return true
-			} else if (g == graph.at(node)->truths.size()-1 && pExists == true && qExists == false){
+			} else if (g == paths.at(i)->path.size()-1 && pExists == true && qExists == false){
 				return true;
 			}
+		}
+		if (valid == true){
+			return true;
 		}
 	}
 	// return true if all the paths's truths have have checked
@@ -364,6 +374,7 @@ bool checkW (vector<Node*> &graph, vector<Path*> &paths, char p, char q){
 }
 // check R by calling W with reversed p and q
 bool checkR(vector<Node*> &graph, vector<Path*> &paths, char p, char q){
+
 	if (checkW(graph, paths, q, p)==true){
 		return true;
 	} else {
@@ -425,7 +436,7 @@ bool validity(vector<Node*> &graph, vector<Path*> &paths){
 			cout << "What is the second truth to be checked? ";
 			cin >> q;
 			cout << "Checking if " << p << "R" << q << " is true\n";
-			validity = checkW(graph, paths, p, q);
+			validity = checkR(graph, paths, p, q);
 			break;
 		default:
 			cout << "Invalid formula";
