@@ -480,23 +480,26 @@ void edgesFromFile(vector<Node*> &graph, string edges){
 
 	while (!ss.eof()){
 		stringstream numTemp;
-		int num;
+		stringstream numTemp2;
+		int nodeNum = 0;
+		int edgeNum = 0;
 
 		getline(ss, token, ':');
 
 		numTemp << token;
-		numTemp >> num;
+		numTemp >> nodeNum;
 
-		Node* node = graph.at(num);
+		Node* node = graph.at(nodeNum);
 
 		getline(ss, token2, ',');
 
-		numTemp << token2;
-		numTemp >> num;
+		numTemp2 << token2;
+		numTemp2 >> edgeNum;
 
-		Node* edge = graph.at(num);
+		Node* edge = graph.at(edgeNum);
 
 		node->edges.push_back(edge);
+
 	}
 }
 
@@ -511,6 +514,8 @@ void graphFromFile (string fileName, vector<Node*> &graph){
     string variable;
     string value;
     int nodesNum;
+	string allEdges;
+	string allTruths;
 
 
     file.open(fileName);
@@ -532,10 +537,15 @@ void graphFromFile (string fileName, vector<Node*> &graph){
         if (variable == "numNodes"){
             nodes << value;
             nodes >> nodesNum;
+			nodesFromFile(nodesNum, graph);
         } else if (variable == "edges"){
             edges << value;
+			edges >> allEdges;
+			edgesFromFile(graph, allEdges);
         } else if (variable == "truths"){
 			truths << value;
+			truths >> allTruths;
+			truthsFromFile(graph, allTruths);
 		}
     }
 
@@ -559,16 +569,16 @@ int main()
 		cin >> createType;
 
 		if (createType == 1){
-			graphFromFile("graph.txt");
+			string fileName = "graph.txt";
+			graphFromFile(fileName, graph);
+			validOption = true;
 		} else if (createType == 2){
 			createNodes(graph);
-			validOption == true;
+			validOption = true;
 		} else {
 			cout << "Invalid option. Please try again" << endl;
 		}
 	}
-	
-
 
 	// for use in finding shortest path
 	int size = graph.size();
